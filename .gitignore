@@ -1,45 +1,47 @@
+```
+# Environment variables
+.env
+.env.local
+*.env.*
+
 # Python
 __pycache__/
-*.py[cod]
+*.pyc
 *.pyo
-.venv/
+*.pyd
+.Python
+env/
 venv/
-*.egg-info/
+.venv/
+.ENV
+.python-version
+
+# Build and distribution artifacts
+build/
 dist/
-.pytest_cache/
+*.egg-info/
 
-# Node
-node_modules/
-.npm/
+# Logs
+*.log
 
-# Build outputs
-frontend/dist/
-remotion/out/
-
-# Environment
-.env
-*.env.local
-
-# Temp files
-/tmp/
-*.mp4
-*.wav
-*.mp3
-backend/static/*.mp4
-backend/static/*.wav
-backend/static/*.mp3
-
-# IDE
+# IDE specific
 .vscode/
 .idea/
 *.swp
+*.swo
 
-# OS
+# OS generated files
 .DS_Store
 Thumbs.db
 
-# Remotion session files
-remotion/src/DiagramAnimation_*.tsx
+# Testing
+.coverage
+htmlcov/
+.coverage.*
+.cache
+.pytest_cache/
+.mypy_cache/
 
-
-.claude/
+# GitHub
+.github/
+```
