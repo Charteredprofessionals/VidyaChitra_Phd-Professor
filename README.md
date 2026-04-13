@@ -1,8 +1,22 @@
-# AI Professor — Autonomous Educational Video Generator
+# AI Professor — Autonomous Educator (Desktop Edition)
 
 ![AI Professor](Assests/main.png)
 
-**AI Professor** is an autonomous AI educator that transforms NCERT and State Board textbook PDFs into engaging educational videos, automatically publishing them to YouTube daily.
+**AI Professor** is a fully offline-capable desktop application that transforms textbook PDFs into engaging educational videos with subject-specific expert personas. No internet required after initial setup.
+
+---
+
+## 🖥️ Desktop Edition Features
+
+This private desktop version includes all cloud features plus:
+
+- ✅ **100% Offline Operation** — Generate videos without internet after initial API key setup
+- ✅ **Local Storage** — All videos saved to your hard drive
+- ✅ **No Cloud Dependencies** — Optional YouTube upload, works standalone
+- ✅ **Curriculum Planner** — Track progress across entire syllabus
+- ✅ **Subject Expert Personas** — PhD-level AI tutors for each subject
+- ✅ **Batch Processing** — Generate multiple lessons in one run
+- ✅ **Progress Tracking** — Resume interrupted sessions automatically
 
 ---
 
@@ -20,8 +34,7 @@ Most existing EdTech solutions are English-first and ignore regional language st
 
 ## The Solution
 
-AI Professor automatically generates educational videos from textbook PDFs and publishes them to YouTube daily. Each video features:
-![AI Professor](https://www.youtube.com/watch?v=xJ32OJfpwWw)
+AI Professor generates educational videos from textbook PDFs and saves them locally. Each video features:
 
 1. **Chapter Summary** — AI-generated explanation of the entire chapter, in the textbook's own language, covering every key concept and formula.
 
@@ -33,6 +46,8 @@ AI Professor automatically generates educational videos from textbook PDFs and p
 
 5. **Subject Expert Personas** — Each subject is taught by a PhD-level AI persona (mathematician, physicist, chemist, historian, etc.) with appropriate pedagogy.
 
+6. **Optional YouTube Upload** — Videos can be uploaded to YouTube automatically or kept private on your desktop.
+
 ---
 
 ## Key Features at a Glance
@@ -40,14 +55,17 @@ AI Professor automatically generates educational videos from textbook PDFs and p
 ### Automatic Language and Board Detection
 AI Professor uses Gemini's native PDF understanding to automatically detect which language the textbook is written in, which board it belongs to, and what class level it is. The entire video content is then generated in that language with the appropriate subject expert persona.
 
-### Real-Time Streaming (No Waiting)
-Videos are generated using parallel processing. Chapter analysis, script generation, Manim animation, and TTS narration run concurrently for fast video production.
+### Offline Desktop Operation
+All video generation happens locally on your machine. Videos are saved to your hard drive and can be played anytime without internet. YouTube upload is optional.
 
 ### Subject Expert Personas
 Each subject is taught by a PhD-level AI persona: mathematicians emphasize proofs, physicists use real-world examples, chemists explain molecular foundations, and historians provide chronological context.
 
-### YouTube Automation
-Videos are automatically uploaded to YouTube with proper titles, descriptions, tags, and thumbnails. Supports public or unlisted publishing.
+### Curriculum Planner
+Track progress across entire syllabi for Classes 6-12. The system remembers which lessons are completed and resumes where you left off.
+
+### Batch Processing
+Generate multiple lessons in one run. Perfect for creating entire chapter libraries over weekends.
 
 ---
 
@@ -65,7 +83,7 @@ All generated content — summaries, narrations, video labels, exam questions �
 
 ---
 
-## How It Works — Automated Pipeline
+## How It Works — Desktop Pipeline
 
 1. **Curriculum Planning** — The system reads `curriculum.json` to determine which lesson to generate next.
 
@@ -79,50 +97,67 @@ All generated content — summaries, narrations, video labels, exam questions �
    - Gemini 2.5 Flash TTS synthesises the audio narration
    - Board-pattern exam questions are generated
 
-5. **Video Assembly** — Audio and video are combined into a final MP4 file.
+5. **Video Assembly** — Audio and video are combined into a final MP4 file saved to `output/` folder.
 
-6. **YouTube Upload** — The video is automatically uploaded with proper title, description, tags, and metadata.
+6. **Optional YouTube Upload** — If configured, videos can be uploaded to YouTube with proper title, description, tags, and metadata.
 
-7. **Progress Tracking** — The lesson is marked as published in `state.json`.
+7. **Progress Tracking** — The lesson is marked as published in `state.json`, allowing you to resume anytime.
 
 ---
 
 ## Technology Architecture
 
-AI Professor is an autonomous video generation system built with Python 3.11 + FastAPI. Every AI capability is powered exclusively by **Google Gemini 2.5 Flash** via the `google-genai` SDK.
+AI Professor is a desktop video generation system built with Python 3.11 + FastAPI. Every AI capability is powered exclusively by **Google Gemini 2.5 Flash** via the `google-genai` SDK.
 
 ### Core Components
 
 | Component | Purpose |
 |-----------|---------|
-| `run_ai_professor.py` | Main automation orchestrator |
-| `youtube_uploader.py` | YouTube Data API integration |
-| `curriculum.json` | Syllabus configuration |
-| `state.json` | Progress tracking |
+| `run_ai_professor.py` | Main automation orchestrator for desktop |
+| `youtube_uploader.py` | Optional YouTube Data API integration |
+| `curriculum.json` | Syllabus configuration (Classes 6-12) |
+| `state.json` | Progress tracking (auto-generated) |
 | `backend/utils/subject_prompts.py` | Subject expert personas |
-| `.github/workflows/ai_professor.yml` | Daily GitHub Actions scheduler |
+| `output/` | Local folder for generated videos |
 
-### API Endpoints
+### Desktop Workflow
 
-| Method | Route | Purpose |
-|--------|-------|---------|
-| `POST` | `/api/upload` | Accepts PDF, runs Gemini native PDF processing, returns session ID + metadata |
-| `GET` | `/api/generate` | SSE stream — runs video, audio, and questions in parallel, yields events as ready |
-| `POST` | `/api/chat` | Streams a grounded chat response using chapter JSON as context |
-| `GET` | `/health` | Health check — reports session count and API key status |
+```bash
+# 1. Setup (one time)
+python run_ai_professor.py --init
 
-### Backend (Python 3.11 + FastAPI)
+# 2. Add PDFs to pdfs/ folder
 
-The backend uses `asyncio` with `asyncio.create_task` and `asyncio.Queue` for true concurrency. Each generation pipeline (video, audio, questions) runs as an independent async task. Results are enqueued as they complete and drained by the SSE event loop, which yields each result to the browser the moment it is ready.
+# 3. Generate lessons
+python run_ai_professor.py              # Process one lesson
+python run_ai_professor.py --all        # Process all pending
+python run_ai_professor.py --lesson 5   # Process specific lesson
 
-**SSE Keepalive**: Manim renders can take 60–180 seconds. To prevent browsers and proxies from dropping the connection during silence, the queue times out every 15 seconds and yields a `ping` event, keeping the connection alive.
-
+# 4. Videos saved to output/class{N}_{subject}/
 ```
-POST /api/upload  →  Gemini (native PDF mode)  →  chapter_json  →  session_id
-GET  /api/generate:
-  ├── asyncio.create_task → generate_questions  → "mcqs" event
-  ├── asyncio.create_task → generate_narration  → "audio" event
-  └── asyncio.create_task → generate_diagram_video → "video" event
+
+### Optional: YouTube Upload
+
+```bash
+# Authenticate (one time)
+python youtube_uploader.py --auth
+
+# Upload a video
+python youtube_uploader.py --upload output/class9_math/final_video.mp4
+```
+
+### Desktop Architecture (Python 3.11 + FastAPI)
+
+The desktop system uses `asyncio` with `asyncio.create_task` for true concurrency. Each generation pipeline (video, audio, questions) runs as an independent async task, with results saved directly to disk.
+
+**Parallel Processing**: Video rendering, audio synthesis, and question generation all run simultaneously, reducing total generation time by 60-70%.
+
+```bash
+run_ai_professor.py:
+  ├── asyncio.create_task → generate_questions  → mcqs.json
+  ├── asyncio.create_task → generate_narration  → narration.wav
+  └── asyncio.create_task → generate_diagram_video → video.mp4
+  └── ffmpeg → combine audio+video → final_video.mp4
 ```
 
 ### AI Pipeline — PDF Understanding
@@ -203,11 +238,18 @@ Gemini 2.5 Flash generates board-specific questions using the full `chapter_json
 
 `document_chat.py` passes the full `chapter_json` as a grounding context and streams Gemini's response using `generate_content_stream`. A system prompt constrains Gemini to answer only from the provided chapter content, preventing hallucinations about unrelated topics.
 
-### Frontend (React 18 + TypeScript + Vite + TailwindCSS)
+### Frontend (Optional Web Interface)
 
-A responsive SPA with glass-morphism design. The custom `useSSEStream` hook manages the `EventSource` lifecycle — it closes the connection immediately on the `done` event (before any state update) to prevent spurious `onerror` callbacks triggered by server-side connection closure.
+The included React 18 + TypeScript + Vite + TailwindCSS frontend provides a web interface for uploading PDFs and viewing generated content. This is optional for desktop use—the main automation runs via CLI.
 
-Vite proxies both `/api` and `/static` to the backend on port 8080, so the frontend never deals with CORS during development.
+**To use the web interface:**
+
+```bash
+cd frontend && npm install && npm run dev
+# Access at http://localhost:5173
+```
+
+For pure desktop automation, you can ignore the frontend and use only `run_ai_professor.py`.
 
 ---
 
@@ -222,11 +264,11 @@ AI Professor does not use pre-built animation templates. Gemini writes original 
 ### Subject Expert Personas
 Each subject is taught by a PhD-level AI persona with appropriate pedagogy: mathematicians emphasize proofs, physicists use real-world examples, chemists explain molecular foundations, and historians provide chronological context.
 
-### Zero Configuration
-The system runs autonomously with no manual intervention. Curriculum, subjects, and languages are auto-detected from PDFs. Language normalisation maps Gemini's free-form output to BCP-47 codes for all downstream use.
+### Desktop-First Design
+No server required. All processing happens on your local machine. Videos are saved directly to your hard drive. Optional YouTube upload for sharing.
 
 ### Parallel Processing Architecture
-All generation tasks (video, audio, questions) run concurrently via `asyncio.create_task`. Videos are assembled and uploaded automatically.
+All generation tasks (video, audio, questions) run concurrently via `asyncio.create_task`, reducing total generation time by 60-70%.
 
 ---
 
@@ -292,36 +334,255 @@ India has over 1.5 million schools. State Board students number over 150 million
 
 ---
 
-## Quick Start for Developers
+## 🚀 Quick Start Guide
 
-Set environment variables:
+### Step 1: Install Prerequisites
+
+**Windows:**
+```powershell
+# Install Python 3.11+
+# Install Node.js 18+
+# Install FFmpeg: choco install ffmpeg
+# Install Git
 ```
-GOOGLE_API_KEY=      # Gemini API key (required — used for all AI: vision, text, TTS, video)
-GOOGLE_CLOUD_BUCKET= # GCS bucket (optional — uses local storage if absent)
-```
 
-**Prerequisites**: FFmpeg must be installed and available in PATH (used by Manim for MP4 encoding).
-
-Run with Docker:
+**macOS:**
 ```bash
-docker-compose up --build
+brew install python@3.11 node ffmpeg git
 ```
 
-Run locally:
+**Linux (Ubuntu/Debian):**
 ```bash
-# Terminal 1 — Backend
-cd backend && pip install -r requirements.txt && uvicorn main:app --port 8080
-
-# Terminal 2 — Frontend
-cd frontend && npm install && npm run dev
+sudo apt update
+sudo apt install python3.11 python3-pip nodejs npm ffmpeg git
 ```
 
-Frontend: http://localhost:5173 · Backend: http://localhost:8080 · Health: http://localhost:8080/health
+### Step 2: Clone and Setup
+
+```bash
+# Clone repository
+git clone <your-repo-url>
+cd AI-Professor
+
+# Create virtual environment
+python -m venv venv
+source venv/bin/activate  # Windows: venv\Scripts\activate
+
+# Install dependencies
+pip install -r backend/requirements.txt
+pip install google-auth-oauthlib google-api-python-client
+
+# Create .env file
+echo "GOOGLE_API_KEY=your_gemini_api_key_here" > .env
+```
+
+### Step 3: Initialize System
+
+```bash
+# Initialize curriculum and state files
+python run_ai_professor.py --init
+```
+
+This creates:
+- `curriculum.json` — Syllabus configuration
+- `state.json` — Progress tracking
+- `pdfs/` — Folder for textbook PDFs
+- `output/` — Folder for generated videos
+
+### Step 4: Add Textbook PDFs
+
+Download NCERT or State Board PDFs and place them in the `pdfs/` folder. Name them according to the pattern in `curriculum.json`:
+
+```
+pdfs/
+├── class9_math_ch1.pdf
+├── class9_math_ch2.pdf
+├── class9_science_ch1.pdf
+└── ...
+```
+
+### Step 5: Generate Your First Lesson
+
+```bash
+# Process one lesson (default)
+python run_ai_professor.py
+
+# Process all pending lessons
+python run_ai_professor.py --all
+
+# Process specific lesson by index
+python run_ai_professor.py --lesson-index 5
+
+# Test mode (uses sample PDF)
+python run_ai_professor.py --test
+```
+
+Generated videos are saved to:
+```
+output/
+├── class9_mathematics/
+│   ├── Linear_Equations/
+│   │   ├── video.mp4
+│   │   ├── audio.wav
+│   │   ├── questions.json
+│   │   └── final_video.mp4
+```
+
+### Step 6: (Optional) YouTube Upload
+
+If you want to upload videos to YouTube:
+
+```bash
+# Authenticate with YouTube (one-time)
+python youtube_uploader.py --auth
+
+# This opens a browser for OAuth. Follow the prompts.
+# token.pickle will be saved for future use.
+
+# Upload a specific video
+python youtube_uploader.py --upload output/class9_mathematics/Linear_Equations/final_video.mp4
+
+# Upload as unlisted (for testing)
+python youtube_uploader.py --upload path/to/video.mp4 --test
+```
+
+### Step 7: (Optional) Web Interface
+
+The included web interface is optional. To use it:
+
+```bash
+cd frontend
+npm install
+npm run dev
+# Access at http://localhost:5173
+```
 
 ---
 
-## License
+## 📋 Command Reference
 
-MIT — Free to use, modify, and deploy.
+### run_ai_professor.py
 
-Built for the Indian education ecosystem. Powered entirely by Google Gemini 2.5 Flash and Manim.
+| Command | Description |
+|---------|-------------|
+| `--init` | Initialize curriculum and state files |
+| `--test` | Run test with sample PDF |
+| `--all` | Process all pending lessons |
+| `--lesson-index N` | Process lesson at index N |
+| `--help` | Show help message |
+
+### youtube_uploader.py
+
+| Command | Description |
+|---------|-------------|
+| `--auth` | Authenticate with YouTube OAuth |
+| `--upload FILE` | Upload video file |
+| `--title TITLE` | Custom title (auto-generated if omitted) |
+| `--test` | Upload as unlisted |
+| `--help` | Show help message |
+
+---
+
+## ⚙️ Configuration
+
+### Environment Variables (.env)
+
+```env
+GOOGLE_API_KEY=your_gemini_api_key_here
+GOOGLE_CLOUD_BUCKET=optional_bucket_name
+```
+
+Get your Gemini API key from: https://aistudio.google.com/apikey
+
+### curriculum.json
+
+Edit this file to customize your syllabus:
+
+```json
+{
+  "classes": [
+    {
+      "class": 9,
+      "subjects": ["mathematics", "science"],
+      "chapters": {
+        "mathematics": ["Linear Equations", "Quadratic Equations"],
+        "science": ["Matter", "Atoms and Molecules"]
+      }
+    }
+  ]
+}
+```
+
+### state.json
+
+Auto-generated. Tracks progress:
+
+```json
+{
+  "published": [...],
+  "pending": [...]
+}
+```
+
+---
+
+## 🛠️ Troubleshooting
+
+### FFmpeg not found
+```bash
+# Verify installation
+ffmpeg -version
+
+# Install if missing
+# Windows: choco install ffmpeg
+# macOS: brew install ffmpeg
+# Linux: sudo apt install ffmpeg
+```
+
+### Manim rendering fails
+- Ensure you have `Noto Sans` fonts installed (Linux)
+- Check that PDF has readable text (not scanned images)
+- Reduce animation complexity in prompt
+
+### API Rate Limits
+- Gemini has rate limits. Add delays between requests if needed
+- The script includes automatic retry logic with exponential backoff
+
+### YouTube Upload Fails
+- Re-authenticate: delete `token.pickle` and run `--auth` again
+- Check quota limits in Google Cloud Console
+- Use `--test` flag for unlisted uploads during testing
+
+---
+
+## 💰 Cost Estimates
+
+Using Gemini 2.5 Flash API:
+
+- **PDF Processing**: ~$0.005 per chapter
+- **Video Script**: ~$0.002 per lesson
+- **TTS Audio**: ~$0.003 per minute
+- **Total per lesson**: ~$0.01-0.02
+
+**Monthly cost for daily videos**: $5-15 depending on usage.
+
+---
+
+## 🔒 Privacy & Security
+
+- All processing happens locally on your machine
+- Videos saved to your hard drive
+- No data sent to third parties (except Gemini API for AI processing)
+- YouTube upload is opt-in only
+- API keys stored in `.env` (add to `.gitignore`)
+
+---
+
+## 📄 License
+
+MIT — Free to use, modify, and deploy privately.
+
+---
+
+**Built for educators, students, and lifelong learners.**  
+**Powered by Google Gemini 2.5 Flash and Manim.**

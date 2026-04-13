@@ -1,67 +1,35 @@
-```
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
-
-# Virtual environments
-venv/
-env/
-ENV/
-.venv/
-.env/
-
-# IDE
-.vscode/
-.idea/
+*.log
+*.tmp
 *.swp
 *.swo
-
-# Logs
-*.log
-
-# Environment variables
+*.out
+*.exe
+*.dll
+*.so
+*.a
+*.class
+*.pyc
+__pycache__/
+.pycache_/
+.mypy_cache/
+.pytest_cache/
+.coverage
+coverage/
+htmlcov/
+node_modules/
+venv/
+.venv/
 .env
 .env.local
-*.env.*
-
-# Coverage reports
-.coverage
-htmlcov/
-.coverage.*
-.coverage.xml
-*.coverage.xml
-
-# MyPy
-.mypy_cache/
-.dmypy.json
-dmypy.json
-
-# Pytest
-.pytest_cache/
-
-# OS
+.env.*
 .DS_Store
 Thumbs.db
-
-# Compressed files
+.vscode/
+.idea/
+dist/
+build/
+target/
+.gradle/
 *.zip
 *.gz
 *.tar
@@ -84,4 +52,3 @@ Thumbs.db
 *.tar.bz2
 *.tar.xz
 *.tar.zst
-```
