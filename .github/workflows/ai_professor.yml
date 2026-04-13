@@ -1,0 +1,74 @@
+name: AI Professor Daily Lesson
+
+on:
+  schedule:
+    - cron: '0 8 * * *'  # Runs daily at 8 AM UTC
+  workflow_dispatch:      # Allows manual trigger
+
+jobs:
+  publish-lesson:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Install FFmpeg
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+      
+      - name: Install system dependencies for Manim
+        run: |
+          sudo apt-get install -y \
+            libcairo2-dev \
+            libpango1.0-dev \
+            pkg-config \
+            python3-dev \
+            libffi-dev \
+            libssl-dev
+      
+      - name: Install Python dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r backend/requirements.txt
+          pip install google-auth-oauthlib google-api-python-client
+      
+      - name: Set up Node.js (for frontend if needed)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      
+      - name: Install frontend dependencies
+        run: |
+          cd frontend
+          npm install
+      
+      - name: Run AI Professor (single lesson)
+        env:
+          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+          GOOGLE_CLOUD_BUCKET: ${{ secrets.GOOGLE_CLOUD_BUCKET }}
+        run: |
+          python run_ai_professor.py --init
+          python run_ai_professor.py
+      
+      - name: Upload generated video as artifact
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: generated-lessons
+          path: output/
+          retention-days: 7
+      
+      - name: Upload logs as artifact
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: error-logs
+          path: ai_professor.log
+          retention-days: 30
