@@ -1,5 +1,5 @@
 """
-VidyaChitra Backend — FastAPI application.
+AI Professor Backend — FastAPI application.
 
 Routes:
   POST /api/upload   — Upload PDF, extract chapter JSON, return session ID
@@ -18,7 +18,7 @@ from typing import AsyncGenerator
 
 from dotenv import load_dotenv
 
-# Load .env from project root (VidyaChitra/.env) regardless of where uvicorn is started.
+# Load .env from project root (ai-professor/.env) regardless of where uvicorn is started.
 # Falls back to CWD as well, so Docker / other setups still work.
 _root_env = Path(__file__).parent.parent / ".env"
 load_dotenv(dotenv_path=_root_env)
@@ -37,7 +37,7 @@ from generation.vernacular_narrator import generate_narration
 from generation.video_generator import generate_diagram_video
 from generation.document_chat import chat_stream
 
-app = FastAPI(title="VidyaChitra API", version="1.0.0")
+app = FastAPI(title="AI Professor API", version="1.0.0")
 
 # CORS — allow frontend dev servers
 app.add_middleware(
@@ -260,7 +260,7 @@ class ChatBody(BaseModel):
 @app.post("/api/chat")
 async def chat_endpoint(body: ChatBody):
     """
-    Stream a grounded chat response from VidyaChitra.
+    Stream a grounded chat response from AI Professor.
     Response is streamed as plain text chunks.
     """
     if body.session_id not in sessions:
