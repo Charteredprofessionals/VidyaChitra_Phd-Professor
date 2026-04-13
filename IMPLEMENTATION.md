@@ -1,8 +1,8 @@
-# AI Professor: Autonomous Educational Video Generator
+# AI Professor: Autonomous Educator
 
 ## Overview
 
-This system transforms the VidyaChitra codebase into a fully autonomous, multi-class, multi-subject "Professor" that generates and publishes educational videos to YouTube daily.
+This system is a fully autonomous, multi-class, multi-subject "Professor" that generates and publishes educational videos to YouTube daily.
 
 ## Architecture
 
@@ -26,7 +26,7 @@ This system transforms the VidyaChitra codebase into a fully autonomous, multi-c
                               │
                               ▼
               ┌───────────────────────────────┐
-              │     VidyaChitra Core          │
+              │     Core Engine               │
               │  - PDF Processing (Gemini)    │
               │  - Video Generation (Manim)   │
               │  - Audio Narration (TTS)      │
@@ -50,9 +50,9 @@ This system transforms the VidyaChitra codebase into a fully autonomous, multi-c
 ### 1. Environment Setup
 
 ```bash
-# Clone repository
-git clone https://github.com/stealthwhizz/VidyaChitra.git
-cd VidyaChitra
+# Clone repository (use your private repo URL)
+git clone git@github.com:YOUR_USERNAME/ai-professor.git
+cd ai-professor
 
 # Create .env file
 cat > .env << EOF

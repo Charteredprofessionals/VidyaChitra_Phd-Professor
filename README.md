@@ -1,8 +1,8 @@
-# VidyaChitra — AI Study Companion for Indian School Students
+# AI Professor — Autonomous Educational Video Generator
 
-![VidyaChitra](Assests/main.png)
+![AI Professor](Assests/main.png)
 
-**विद्याचित्र** (VidyaChitra) means "picture of knowledge" in Sanskrit. It is an AI-powered study companion that transforms any NCERT or State Board textbook PDF into a complete, personalised study kit — in the student's own language — within seconds.
+**AI Professor** is an autonomous AI educator that transforms NCERT and State Board textbook PDFs into engaging educational videos, automatically publishing them to YouTube daily.
 
 ---
 
@@ -14,40 +14,40 @@ Over 250 million school students in India study from State Board and NCERT textb
 2. **No visual aids** — Diagrams in textbooks are static. Complex science and math concepts — ray diagrams, circuit diagrams, biological processes — are very hard to learn from a flat image alone.
 3. **Exam unpreparedness** — Students don't know how questions will be framed in their specific board's pattern (Karnataka SSLC, CBSE, Maharashtra SSC, Tamil Nadu State Board all have different formats).
 
-Most existing EdTech solutions are English-first and ignore regional language students. VidyaChitra is built for India's linguistic diversity from the ground up.
+Most existing EdTech solutions are English-first and ignore regional language students. AI Professor is built for India's linguistic diversity from the ground up, automatically generating videos with subject-specific expert personas.
 
 ---
 
 ## The Solution
 
-VidyaChitra lets a student upload any chapter PDF from their school textbook and instantly receives five personalised study materials, all streamed live as they are generated:
-![VidyaChitra](https://www.youtube.com/watch?v=xJ32OJfpwWw)
+AI Professor automatically generates educational videos from textbook PDFs and publishes them to YouTube daily. Each video features:
+![AI Professor](https://www.youtube.com/watch?v=xJ32OJfpwWw)
 
-1. **Chapter Summary** — A teacher-style explanation of the entire chapter, written in the textbook's own language, covering every key concept and formula. It appears on screen within seconds of uploading.
+1. **Chapter Summary** — AI-generated explanation of the entire chapter, in the textbook's own language, covering every key concept and formula.
 
-2. **Animated Diagram Explainer Video** — An AI-generated short video (15–25 seconds) that animates the most important concept in the chapter. For example, for a chapter on electromagnetism, the video shows the coil, magnetic field lines, and N/S poles appearing step by step — all labelled in the student's language.
+2. **Animated Diagram Video** — An AI-generated short video (15–25 seconds) that animates the most important concept using Manim, with all labels in the student's language.
 
-3. **Audio Narration** — A spoken, teacher-style narration of the chapter in the student's regional language, synthesised using Gemini 2.5 Flash TTS. Students can listen while commuting or doing other tasks.
+3. **Audio Narration** — A spoken, teacher-style narration synthesised using Gemini 2.5 Flash TTS in regional Indian languages.
 
-4. **Board-Pattern Exam Questions** — Ten MCQs, three short-answer questions, and one Higher Order Thinking (HOT) question, all framed exactly as they would appear in the student's specific board exam. Questions include explanations and flag concepts that have appeared in previous year papers.
+4. **Board-Pattern Exam Questions** — Ten MCQs, three short-answer questions, and one Higher Order Thinking (HOT) question, framed exactly as they would appear in the specific board exam.
 
-5. **Grounded AI Chat** — A conversational AI tutor that answers any question about the chapter — but only from the chapter's own content, preventing hallucinations. Ask "What is a convex lens?" and it answers from the exact chapter text, citing the relevant concept.
+5. **Subject Expert Personas** — Each subject is taught by a PhD-level AI persona (mathematician, physicist, chemist, historian, etc.) with appropriate pedagogy.
 
 ---
 
 ## Key Features at a Glance
 
 ### Automatic Language and Board Detection
-Students do not need to configure anything. VidyaChitra uses Gemini's native PDF understanding to automatically detect which language the textbook is written in, which board it belongs to, and what class level it is. The entire study kit is then generated in that language and board pattern.
+AI Professor uses Gemini's native PDF understanding to automatically detect which language the textbook is written in, which board it belongs to, and what class level it is. The entire video content is then generated in that language with the appropriate subject expert persona.
 
 ### Real-Time Streaming (No Waiting)
-Results are streamed live using Server-Sent Events (SSE). The chapter summary appears within 5–10 seconds of uploading. The video, audio, and questions are generated in parallel in the background and pop up on screen the moment each one is ready.
+Videos are generated using parallel processing. Chapter analysis, script generation, Manim animation, and TTS narration run concurrently for fast video production.
 
-### Side-by-Side PDF Viewer
-The original textbook PDF is displayed alongside the generated study materials, so students can read the source while watching explanations.
+### Subject Expert Personas
+Each subject is taught by a PhD-level AI persona: mathematicians emphasize proofs, physicists use real-world examples, chemists explain molecular foundations, and historians provide chronological context.
 
-### Progressive Web App (PWA)
-VidyaChitra works in any browser and can be installed on Android phones directly from the browser — no app store required. This makes it accessible on low-cost Android devices common in Indian schools.
+### YouTube Automation
+Videos are automatically uploaded to YouTube with proper titles, descriptions, tags, and thumbnails. Supports public or unlisted publishing.
 
 ---
 
@@ -65,23 +65,42 @@ All generated content — summaries, narrations, video labels, exam questions �
 
 ---
 
-## How It Works — User Journey
+## How It Works — Automated Pipeline
 
-1. **Upload** — The student drags and drops their textbook chapter PDF onto the VidyaChitra web app.
-2. **Auto-Detect** — Gemini 2.5 Flash reads the PDF natively (vector text, diagrams, Indic scripts) and identifies the language, board, class level, chapter name, all diagrams, formulas, and key concepts in one pass.
-3. **Instant Summary** — The chapter summary is streamed to the screen in the detected language within seconds.
-4. **Parallel Generation** — Three AI pipelines run simultaneously in the background:
-   - Manim (Python animation library) renders an animated MP4 of the key concept
+1. **Curriculum Planning** — The system reads `curriculum.json` to determine which lesson to generate next.
+
+2. **PDF Processing** — Gemini 2.5 Flash reads the textbook PDF natively (vector text, diagrams, Indic scripts) and identifies the language, board, class level, chapter name, diagrams, formulas, and key concepts in one pass.
+
+3. **Subject Persona Selection** — Based on the subject (mathematics, physics, chemistry, etc.), the appropriate PhD-level expert persona is loaded.
+
+4. **Parallel Generation** — Multiple AI pipelines run simultaneously:
+   - Subject-specific script generation with expert persona
+   - Manim animation renders an animated MP4 of the key concept
    - Gemini 2.5 Flash TTS synthesises the audio narration
-   - Gemini generates board-pattern exam questions
-5. **Live Reveal** — Each result appears on screen as soon as it finishes, with smooth fade-in animations and a progress indicator.
-6. **Study and Chat** — The student can play the video, listen to the narration, attempt MCQs (with instant feedback and explanations), and ask follow-up questions in the chat panel.
+   - Board-pattern exam questions are generated
+
+5. **Video Assembly** — Audio and video are combined into a final MP4 file.
+
+6. **YouTube Upload** — The video is automatically uploaded with proper title, description, tags, and metadata.
+
+7. **Progress Tracking** — The lesson is marked as published in `state.json`.
 
 ---
 
 ## Technology Architecture
 
-VidyaChitra is a full-stack web application built with Python 3.11 + FastAPI on the backend and React 18 + TypeScript on the frontend. Every AI capability is powered exclusively by **Google Gemini 2.5 Flash** via the `google-genai` SDK.
+AI Professor is an autonomous video generation system built with Python 3.11 + FastAPI. Every AI capability is powered exclusively by **Google Gemini 2.5 Flash** via the `google-genai` SDK.
+
+### Core Components
+
+| Component | Purpose |
+|-----------|---------|
+| `run_ai_professor.py` | Main automation orchestrator |
+| `youtube_uploader.py` | YouTube Data API integration |
+| `curriculum.json` | Syllabus configuration |
+| `state.json` | Progress tracking |
+| `backend/utils/subject_prompts.py` | Subject expert personas |
+| `.github/workflows/ai_professor.yml` | Daily GitHub Actions scheduler |
 
 ### API Endpoints
 
@@ -195,16 +214,19 @@ Vite proxies both `/api` and `/static` to the backend on port 8080, so the front
 ## Innovation Highlights
 
 ### One-Call Native PDF Understanding
-Instead of rendering each PDF page to an image and making one API call per page, VidyaChitra passes the entire PDF as raw bytes to Gemini with `mime_type="application/pdf"`. Gemini reads all pages, diagrams, formulas, and Indic scripts in a single pass.
+Instead of rendering each PDF page to an image and making one API call per page, AI Professor passes the entire PDF as raw bytes to Gemini with `mime_type="application/pdf"`. Gemini reads all pages, diagrams, formulas, and Indic scripts in a single pass.
 
 ### AI-Written Manim Animations
-VidyaChitra does not use pre-built animation templates. Gemini writes original Python animation code for every chapter it encounters, and Manim renders them as MP4 videos. The two-step pipeline (concept script → Manim code) ensures text length is controlled and language is correct before code generation.
+AI Professor does not use pre-built animation templates. Gemini writes original Python animation code for every chapter it encounters, and Manim renders them as MP4 videos. The two-step pipeline (concept script → Manim code) ensures text length is controlled and language is correct before code generation.
+
+### Subject Expert Personas
+Each subject is taught by a PhD-level AI persona with appropriate pedagogy: mathematicians emphasize proofs, physicists use real-world examples, chemists explain molecular foundations, and historians provide chronological context.
 
 ### Zero Configuration
-Students upload a PDF and get results. There are no dropdowns for language, board, or class — Gemini detects all of these automatically. Language normalisation maps Gemini's free-form output to BCP-47 codes for all downstream use.
+The system runs autonomously with no manual intervention. Curriculum, subjects, and languages are auto-detected from PDFs. Language normalisation maps Gemini's free-form output to BCP-47 codes for all downstream use.
 
-### Parallel Streaming Architecture
-All three generation tasks (video, audio, questions) run concurrently via `asyncio.create_task`. The frontend receives each result the moment it is ready, rather than waiting for all tasks to finish.
+### Parallel Processing Architecture
+All generation tasks (video, audio, questions) run concurrently via `asyncio.create_task`. Videos are assembled and uploaded automatically.
 
 ---
 
@@ -219,7 +241,7 @@ Indian school students in Class 6–12 who study from regional-language textbook
 - **Competitive exam aspirants** — Use board-pattern questions for self-assessment
 
 ### Potential Scale
-India has over 1.5 million schools. State Board students number over 150 million. VidyaChitra's automatic language detection and board adaptation means the same product works for a student in Bengaluru (Kannada), Mumbai (Marathi), Chennai (Tamil), or Hyderabad (Telugu) without any customisation.
+India has over 1.5 million schools. State Board students number over 150 million. AI Professor's automatic language detection and subject-specific personas mean the same system works for a student in Bengaluru (Kannada), Mumbai (Marathi), Chennai (Tamil), or Hyderabad (Telugu) without any customisation, publishing educational videos to YouTube daily.
 
 ---
 
@@ -236,25 +258,25 @@ India has over 1.5 million schools. State Board students number over 150 million
 | Indic Font (Windows) | Nirmala UI (built-in) |
 | Indic Font (Linux) | Noto Sans (`fonts-noto-extra`) |
 | Storage | Google Cloud Storage (local `static/` fallback) |
-| Frontend | React 18, TypeScript, Vite, TailwindCSS |
-| Frontend Proxy | Vite proxy → `/api` and `/static` to port 8080 |
-| Mobile Install | Progressive Web App (PWA) |
+| Automation | GitHub Actions (daily scheduler) |
+| YouTube Integration | YouTube Data API v3 + OAuth 2.0 |
 | Deployment | Docker + docker-compose |
 
 ---
 
-## What Makes VidyaChitra Different
+## What Makes AI Professor Different
 
-| Feature | VidyaChitra | Typical EdTech App |
+| Feature | AI Professor | Typical EdTech App |
 |---------|-------------|-------------------|
+| Automation | Fully autonomous daily video generation | Manual content creation |
 | Indian language support | 6 regional languages, auto-detected | English only |
+| Subject expert personas | PhD-level AI tutors per subject | Generic presenters |
 | Animated diagram videos | AI-generated per chapter via Manim | Pre-recorded or none |
 | Board-specific questions | Karnataka / CBSE / Maharashtra / Tamil Nadu | Generic |
 | Audio narration | Gemini TTS in student's own language | English only |
-| Works on low-cost Android | Yes (PWA, no app store) | Usually requires app |
-| Grounded AI chat | Yes — answers only from chapter content | Often hallucinates |
-| Real-time streaming | SSE — each result streams as generated | Wait for everything |
-| Single API key needed | Yes — only `GOOGLE_API_KEY` required | Multiple services |
+| YouTube integration | Auto-upload with metadata | Manual upload |
+| Curriculum tracking | Automatic progress across all chapters | No tracking |
+| Zero manual intervention | Daily scheduled runs via GitHub Actions | Full manual workflow |
 
 ---
 

@@ -68,7 +68,7 @@ def _get_client() -> genai.Client:
 # Produces structured JSON so the Manim prompt has exact, length-controlled text.
 
 SCRIPT_PROMPT = """\
-You are VidyaChitra, an AI tutor for Indian school students.
+You are AI Professor, an expert AI tutor for Indian school students.
 Your job: read the chapter summary below and create a 3-step visual
 explanation of the MOST IMPORTANT concept from that chapter.
 
